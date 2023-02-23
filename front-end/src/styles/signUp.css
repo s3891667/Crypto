@@ -1,0 +1,37 @@
+.layoutSignup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  margin-top: 9rem;
+  height: 45rem;
+  width: 45rem;
+  color: #808080;
+  font-size: 20px;
+  border-radius: 1rem;
+}
+
+.layoutSignup h1 {
+  padding-top: 2rem;
+  font-size: 35px;
+  padding: auto;
+  text-align: center;
+  color: black;
+}
+
+.form-style {
+  text-align: center;
+}
+
+input {
+  width: 31rem;
+}
+
+#signUpform {
+  padding-top: 2rem;
+}
+
+#signUpform form label {
+  padding-left: 7rem;
+}
