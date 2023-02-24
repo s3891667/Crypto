@@ -1,8 +1,4 @@
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-var app = express();
+var User = require("../../models/user/userModel.js");
 
 /*userController object contains functions that is requested
 by the users */
@@ -12,6 +8,13 @@ const userControl = {
   },
   register: async (req, res) => {
     const { email, username, password, repassword } = req.body;
+    const newUser = new User({
+      username: username,
+      email: email,
+      password: password,
+    });
+    newUser.save();
+
     return res.json("hello");
   },
 };

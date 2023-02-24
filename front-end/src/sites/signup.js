@@ -32,16 +32,10 @@ class Signup extends React.Component {
       [name]: value,
     });
   }
-  fetchMessage() {
-    fetch("/api/user/signUp/", {
-      method: "POST",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        this.setState({
-          message: data,
-        });
-      });
+  fetchMessage(data) {
+    this.setState({
+      message: data,
+    });
   }
 
   handleSubmit(event) {
@@ -55,8 +49,7 @@ class Signup extends React.Component {
         repassword: this.state.repassword,
       })
       .then((response) => {
-        console.log(response.data);
-        this.fetchMessage(); // Update the message state
+        this.fetchMessage(response.data); // Update the message state
       })
       .catch((error) => {
         console.log(error);

@@ -7,6 +7,10 @@ var axios = require("axios");
 var adminRouter = require("./routes/admin");
 var userRouter = require("./routes/user");
 var testing = require("./middleWare/user/userControl");
+//connect MongoDB server
+require("./models/user/userModel.js");
+require("./database/db.js");
+
 var app = express();
 
 app.use(logger("dev"));
