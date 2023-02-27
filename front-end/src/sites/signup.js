@@ -44,7 +44,7 @@ class Signup extends React.Component {
     axios
       .post(url, {
         email: this.state.email,
-        userName: this.state.username,
+        username: this.state.username,
         password: this.state.password,
         repassword: this.state.repassword,
       })
@@ -62,7 +62,7 @@ class Signup extends React.Component {
         <div className="layoutSignup">
           <div className="form-ele1">
             <h1>Sign Up </h1>
-            <p id="message">{this.state.message}dwdwdw</p>
+            <p id="message">{this.state.message}</p>
             <div className="form-ele2" id="signUpform">
               <form onSubmit={this.handleSubmit}>
                 <label>User Name</label>
@@ -86,6 +86,8 @@ class Signup extends React.Component {
                     name="password"
                     value={this.state.password}
                     onChange={this.handleInputChange}
+                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                    required
                   />
                 </div>
                 <br />
@@ -98,6 +100,7 @@ class Signup extends React.Component {
                     name="repassword"
                     value={this.state.repassword}
                     onChange={this.handleInputChange}
+                    required
                   />
                 </div>
                 <br />
@@ -110,6 +113,7 @@ class Signup extends React.Component {
                     name="email"
                     value={this.state.email}
                     onChange={this.handleInputChange}
+                    required
                   />
                 </div>
                 <br />
@@ -118,6 +122,13 @@ class Signup extends React.Component {
                 </div>
                 <button className="w-32 h-16 formButton" type="submit">
                   Submit
+                </button>
+                <button>
+                  {/*implement this instead of submiting only
+		    it will submit it therefore redirect the user to another page 
+		    that require the user to input there verification code in order to 
+		    create the account ! */}
+                  <Link to="/signup/email/"> hiii</Link>
                 </button>
               </form>
             </div>
