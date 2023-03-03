@@ -2,11 +2,30 @@
 //as well as email verfication
 const nodemailer = require("nodemailer");
 require("dotenv").config();
+const axios = require("axios");
+const cookieParser = require("cookie-parser");
+const express = require("express");
+const app = express();
+app.use(cookieParser());
 
 const userMiddleWare = {
-  // Create a transporter object to send emails
   verification: async (req, res) => {
-    console.log(req.body.email);
+    try {
+      req.app.get("/cookies", (req, res) => {
+        console.log(req.cookies.authcookie);
+        res.sendStatus(200);
+      });
+
+      if (req.cookies.authcookie == req.body.vericode) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  // Create a transporter object to send emails
+  optCodesending: async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -14,13 +33,13 @@ const userMiddleWare = {
         pass: process.env.EMAIL_HOST_PASSWORD,
       },
     });
-
     // Generate a random verification code
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
     //right here the user gonna receive the code from
     //there email after that we gonna ask them to input the code
     //and decided whether we create the account or not
     //once it is not confirmed for 5 minutes the program gonna return error
+    req.session.registerCode = verificationCode;
 
     // Set up the email message
     const mailOptions = {
@@ -29,6 +48,14 @@ const userMiddleWare = {
       subject: "Account Verification Code",
       text: `Your verification code is: ${verificationCode}`,
     };
+
+    req.app.get("/cookies", (req, res) => {
+      res.cookie("authcookie", req.session.registerCode, {
+        secure: true,
+        httpOnly: true,
+      });
+      res.json(verificationCode);
+    });
 
     // Send the email
     transporter.sendMail(mailOptions, function (error, info) {

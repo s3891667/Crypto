@@ -1,0 +1,25 @@
+.layoutEmail h1 {
+  padding-top: 2rem;
+  font-size: 35px;
+  padding: auto;
+  text-align: center;
+  color: black;
+}
+
+.layoutEmail {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  margin-top: 9rem;
+  height: 40rem;
+  width: 45rem;
+  color: #808080;
+  font-size: 20px;
+  border-radius: 1rem;
+}
+
+.divider {
+  margin-top: 3rem;
+}

@@ -55,6 +55,13 @@
   background-color: #f2f2f2;
   color: black;
 }
+
+.form-ele1 .emailVerification input {
+  border-radius: 10px;
+  background-color: #f2f2f2;
+  color: black;
+}
+
 textarea {
   background-color: #f2f2f2;
   border-radius: 10px;

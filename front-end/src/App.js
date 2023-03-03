@@ -7,6 +7,7 @@ import Index from "./sites/index.js";
 import Navbar from "./components/navbar.js";
 import Footer from "./components/footer.js";
 import Signup from "./sites/signup.js";
+import Email from "./sites/email.js";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="about" />
           <Route path="SignUp" element={<Signup />} />
           <Route path="login" element={<Login />} />
+          <Route path="/SignUp/email" element={<Email />} />
         </Routes>
         <Footer></Footer>
       </Router>

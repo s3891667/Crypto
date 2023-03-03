@@ -1,6 +1,10 @@
 const bcrypt = require("bcrypt");
 const User = require("../../models/user/userModel.js");
 const userMiddleWare = require("../../middleWare/user/userMiddleWare.js");
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const app = express();
+app.use(cookieParser());
 
 /*userController object contains functions that is requested
 by the users */
@@ -27,11 +31,19 @@ const userControl = {
           email: email,
           password: encrypted_pass,
         });
+        //sending the opt code to users' emails
+        await userMiddleWare.optCodesending(req, res);
+        //console.log(req.session.registerCode);
+        //if the code is correct then continue to create an account
 
-        await userMiddleWare.verification(req, res);
+        // Get cookie on request to /api
+
+        const isVerified = await userMiddleWare.verification(req, res);
         //after verified then continue
-        await newUser.save();
-        return res.json("Please check email for account verification !");
+        if (isVerified) {
+          await newUser.save();
+          return res.json("good");
+        }
       }
     } catch (error) {
       console.log(error);
