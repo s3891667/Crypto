@@ -15,38 +15,43 @@ function Email() {
   const fetchCookies = async (req, res) => {
     try {
       const response = await fetch("http://localhost:5000/cookies/", {
-        header: "GET",
-        Accept: "application/json",
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
-      const data = response.json();
+      const data = await response.json();
       return data;
     } catch (err) {
       console.log(err);
     }
   };
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     const url = "http://localhost:5000/api/user/signUp/Email/";
 
     event.preventDefault();
+
+    const cookies = await fetchCookies();
     const data = {
       vericode: vericode,
     };
 
-    if (data.vericode !== fetchCookies()) {
-      navigate("/signUp/Email?=Wrong_Code");
-      setMessage("Please check your code again !");
-      return false;
-    }
-
+    //console.log(cookies);
     axios
-      .post(url, data)
+      .post(url, data, { withCredentials: true })
       .then((response) => {
         console.log("yes");
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);
+        //navigate("/signUp/Email?=Wrong_Code");
+        //setMessage("Please check your code again !");
       });
+    //navigate("/login");
+    // } else {
+    //   navigate("/signUp/Email?=Wrong_Code");
+    //   setMessage("Please check your code again !");
+    // }
   };
   return (
     <>

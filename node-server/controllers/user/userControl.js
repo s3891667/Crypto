@@ -10,41 +10,72 @@ app.use(cookieParser());
 by the users */
 const userControl = {
   login: async (_req, res) => {
+    // return res.cookie("authcookie", verificationCode, {
+    //   secure: true,
+    //   httpOnly: true,
+    //   sameSite: "Strict",
+    // });
     return res.json("You have succesfully logged in !");
   },
   register: async (req, res) => {
-    const { email, username, password, repassword } = req.body;
-
+    const { email, username, password } = req.body;
+    // Create cookie for client
     try {
-      //if pass not match
-      if (password != repassword) {
-        return res.json("The password are not matched !");
-      }
-      //if account existed
-      else if (await User.findOne({ username, email })) {
+      // Find user
+      const existedUser = await User.findOne({ username, email });
+      if (existedUser) {
+        // If user exists, .....
         return res.json("the account have already existed ! ");
-      } else {
-        //encrypt the password to protect the account
-        const encrypted_pass = await bcrypt.hash(password, 15);
-        const newUser = new User({
-          username: username,
-          email: email,
-          password: encrypted_pass,
-        });
-        //sending the opt code to users' emails
-        await userMiddleWare.optCodesending(req, res);
-        //console.log(req.session.registerCode);
-        //if the code is correct then continue to create an account
-
-        // Get cookie on request to /api
-
-        const isVerified = await userMiddleWare.verification(req, res);
-        //after verified then continue
-        if (isVerified) {
-          await newUser.save();
-          return res.json("good");
-        }
       }
+      //sending the opt code to users' emails
+      const verificationCode = Math.floor(100000 + Math.random() * 900000);
+      await userMiddleWare.optCodesending(verificationCode, email);
+      const temporaryUser = new User({
+        username: username,
+        email: email,
+        password: password,
+      });
+      await temporaryUser.save();
+
+      console.log(email);
+      req.app.get("/cookies", (_req, res) => {
+        const { email } = req.body;
+        res.cookie("authcookie", email, {
+          secure: true,
+          httpOnly: true,
+          sameSite: "Strict",
+        });
+        res.send("successed");
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  validateRegistration: async (req, res) => {
+    const { email, username, password } = req.body;
+    try {
+      const vericode = req.body.vericode;
+      console.log(vericode);
+      if (!vericode) {
+        return res.status(404).json("Empty verfication code");
+      }
+      const user = await User.findOne({ username, email });
+      if (!user) res.status(404).json("User does not exist");
+      if (user.OTPCode !== vericode) {
+        // TODO: Delete temporary user
+        await User.deleteOne();
+        res.status(404).json("Incorrect OTP");
+      }
+      // Valid OTP !!!!
+
+      //encrypt the password to protect the account
+      const encrypted_pass = await bcrypt.hash(password, 15);
+      //const newUser = User.findOneAndUpdate({
+      // {username, email},
+      // {OTPCode: "", isVerified:true},
+      //});
+
+      //return res.status(200).json(newUser);
     } catch (error) {
       console.log(error);
     }

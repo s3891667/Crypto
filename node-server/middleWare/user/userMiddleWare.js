@@ -1,31 +1,46 @@
 //this file will contain authentification
 //as well as email verfication
+const User = require("../../models/user/userModel.js");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
-const axios = require("axios");
 const cookieParser = require("cookie-parser");
 const express = require("express");
 const app = express();
 app.use(cookieParser());
 
 const userMiddleWare = {
-  verification: async (req, res) => {
-    try {
-      req.app.get("/cookies", (req, res) => {
-        console.log(req.cookies.authcookie);
-        res.sendStatus(200);
-      });
-
-      if (req.cookies.authcookie == req.body.vericode) {
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.log(error);
+  validateRegistration: async (req, res) => {
+    const email = req.cookies.authcookie;
+    console.log(req.cookies.authcookie);
+    //  try {
+    const vericode = req.body.vericode;
+    console.log(vericode);
+    if (!vericode) {
+      return res.status(404).json("Empty verfication code");
     }
+    //const user = await User.findOne({ username, email });
+    //if (!user) res.status(404).json("User does not exist");
+    //if (user.OTPCode !== vericode) {
+    // TODO: Delete temporary user
+    //await User.deleteOne();
+    //res.status(404).json("Incorrect OTP");
+    //}
+    // Valid OTP !!!!
+
+    //encrypt the password to protect the account
+    //const encrypted_pass = await bcrypt.hash(password, 15);
+    //const newUser = User.findOneAndUpdate({
+    // {username, email},
+    // {OTPCode: "", isVerified:true},
+    //});
+
+    //return res.status(200).json(newUser);
+    //} catch (error) {
+    //  console.log(error);
+    // }
   },
   // Create a transporter object to send emails
-  optCodesending: async (req, res) => {
+  optCodesending: async (verificationCode, email) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -33,29 +48,19 @@ const userMiddleWare = {
         pass: process.env.EMAIL_HOST_PASSWORD,
       },
     });
-    // Generate a random verification code
-    const verificationCode = Math.floor(100000 + Math.random() * 900000);
+
     //right here the user gonna receive the code from
     //there email after that we gonna ask them to input the code
     //and decided whether we create the account or not
     //once it is not confirmed for 5 minutes the program gonna return error
-    req.session.registerCode = verificationCode;
 
     // Set up the email message
     const mailOptions = {
       from: process.env.EMAIL,
-      to: req.body.email,
+      to: email,
       subject: "Account Verification Code",
       text: `Your verification code is: ${verificationCode}`,
     };
-
-    req.app.get("/cookies", (req, res) => {
-      res.cookie("authcookie", req.session.registerCode, {
-        secure: true,
-        httpOnly: true,
-      });
-      res.json(verificationCode);
-    });
 
     // Send the email
     transporter.sendMail(mailOptions, function (error, info) {
